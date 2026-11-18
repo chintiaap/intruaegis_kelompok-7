@@ -78,3 +78,26 @@ label = [classes[i] for i in pred]
 ```
 
 Urutan kolom harus sama dengan `feature_names.json`. Contoh masukan ada di `artifacts/sample_flows.csv` (kolom `Label` dibuang sebelum prediksi).
+
+## Catatan untuk frontend (Orang 3)
+
+Data yang bisa dipakai halaman web, semuanya sudah jadi di `artifacts/`:
+
+| Kebutuhan halaman | Sumber | Keterangan |
+| --- | --- | --- |
+| Halaman Performa: kartu ringkasan | `metrics.json` → `accuracy`, `macro_f1`, `false_positive`, `false_negative` | Nilai 0 sampai 1 (kalikan 100 untuk persen) |
+| Halaman Performa: tabel per kelas | `metrics.json` → `per_class[]` | Tiap item: `label`, `precision`, `recall`, `f1`, `support` |
+| Halaman Performa: heatmap | `metrics.json` → `confusion_matrix` dan `classes` | Matriks 15x15 jumlah mentah; baris = aktual, kolom = prediksi, urutan sama dengan `classes` |
+| Halaman Performa: fitur penting | `metrics.json` → `feature_importance[]` | 15 fitur teratas: `feature`, `importance` |
+| Gambar siap pakai | `confusion_matrix.png`, `feature_importance.png`, `distribusi_kelas.png` | Bisa ditampilkan langsung atau dipakai di laporan |
+| Halaman Deteksi: contoh data uji | `sample_flows.csv` | 109 baris, 69 fitur + kolom `Label` (jawaban asli untuk dibandingkan dengan prediksi) |
+
+Hal yang perlu diperhatikan:
+
+- Model punya **15 kelas**: `BENIGN` (lalu lintas normal) dan 14 jenis serangan. Daftar lengkap dan urutannya ada di `classes.json`. Pakai file itu sebagai satu-satunya acuan nama label untuk warna, badge, dan legenda.
+- Input prediksi berupa **69 angka** per aliran jaringan, urutan kolom sesuai `feature_names.json`. Untuk demo, pilih satu baris dari `sample_flows.csv`.
+- Dalam pandangan IDS, hasil dikelompokkan menjadi **normal** (`BENIGN`) dan **serangan** (14 kelas lain). Kartu status di dashboard cukup memakai dua kelompok ini, sedangkan nama serangan spesifik ditampilkan sebagai detail.
+- Ada kelas yang performanya lebih rendah karena datanya sedikit: XSS (recall 0,28), Heartbleed (2 sampel uji), SQL Injection (4 sampel uji). Sebaiknya halaman Performa memberi catatan kecil agar pengguna tidak salah baca.
+- Jika backend ingin menampilkan tingkat keyakinan, `model.predict_proba` tersedia (Random Forest).
+
+Jika bentuk data di atas perlu diubah (misalnya format JSON lain untuk grafik), beri tahu Orang 1, karena `metrics.json` dibuat dari notebook dan mudah disesuaikan.
