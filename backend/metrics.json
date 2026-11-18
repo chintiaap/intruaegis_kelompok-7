@@ -1,0 +1,449 @@
+{
+  "accuracy": 0.9982584893684544,
+  "macro_f1": 0.8650465211357383,
+  "classes": [
+    "BENIGN",
+    "Bot",
+    "DDoS",
+    "DoS GoldenEye",
+    "DoS Hulk",
+    "DoS Slowhttptest",
+    "DoS slowloris",
+    "FTP-Patator",
+    "Heartbleed",
+    "Infiltration",
+    "PortScan",
+    "SSH-Patator",
+    "Web Attack - Brute Force",
+    "Web Attack - Sql Injection",
+    "Web Attack - XSS"
+  ],
+  "per_class": [
+    {
+      "label": "BENIGN",
+      "precision": 0.9990050819554792,
+      "recall": 0.9992864166181398,
+      "f1": 0.9991457294825936,
+      "support": 419012
+    },
+    {
+      "label": "Bot",
+      "precision": 0.8961424332344213,
+      "recall": 0.7743589743589744,
+      "f1": 0.8308115543328748,
+      "support": 390
+    },
+    {
+      "label": "DDoS",
+      "precision": 0.9998437622060776,
+      "recall": 0.9998047103855017,
+      "f1": 0.9998242359144615,
+      "support": 25603
+    },
+    {
+      "label": "DoS GoldenEye",
+      "precision": 0.9965836993655441,
+      "recall": 0.9927078269324259,
+      "f1": 0.9946419873356064,
+      "support": 2057
+    },
+    {
+      "label": "DoS Hulk",
+      "precision": 0.9981757108936121,
+      "recall": 0.9971650901096358,
+      "f1": 0.997670144566806,
+      "support": 34569
+    },
+    {
+      "label": "DoS Slowhttptest",
+      "precision": 0.9886148007590133,
+      "recall": 0.9961759082217974,
+      "f1": 0.9923809523809524,
+      "support": 1046
+    },
+    {
+      "label": "DoS slowloris",
+      "precision": 0.9953227315247896,
+      "recall": 0.9879294336118849,
+      "f1": 0.9916123019571296,
+      "support": 1077
+    },
+    {
+      "label": "FTP-Patator",
+      "precision": 0.99915611814346,
+      "recall": 0.9983136593591906,
+      "f1": 0.9987347110923661,
+      "support": 1186
+    },
+    {
+      "label": "Heartbleed",
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6666666666666666,
+      "support": 2
+    },
+    {
+      "label": "Infiltration",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 7
+    },
+    {
+      "label": "PortScan",
+      "precision": 0.9889722099691222,
+      "recall": 0.9888086443574619,
+      "f1": 0.9888904203997243,
+      "support": 18139
+    },
+    {
+      "label": "SSH-Patator",
+      "precision": 1.0,
+      "recall": 0.9968944099378882,
+      "f1": 0.9984447900466563,
+      "support": 644
+    },
+    {
+      "label": "Web Attack - Brute Force",
+      "precision": 0.7363636363636363,
+      "recall": 0.826530612244898,
+      "f1": 0.7788461538461539,
+      "support": 294
+    },
+    {
+      "label": "Web Attack - Sql Injection",
+      "precision": 1.0,
+      "recall": 0.25,
+      "f1": 0.4,
+      "support": 4
+    },
+    {
+      "label": "Web Attack - XSS",
+      "precision": 0.43373493975903615,
+      "recall": 0.27692307692307694,
+      "f1": 0.3380281690140845,
+      "support": 130
+    }
+  ],
+  "confusion_matrix": [
+    [
+      418713,
+      35,
+      4,
+      2,
+      52,
+      7,
+      1,
+      1,
+      0,
+      0,
+      196,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      88,
+      302,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      4,
+      0,
+      25598,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      9,
+      0,
+      0,
+      2042,
+      6,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      92,
+      0,
+      0,
+      4,
+      34471,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1042,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      9,
+      0,
+      0,
+      0,
+      0,
+      4,
+      1064,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1184,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      7,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      197,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      17936,
+      0,
+      1,
+      0,
+      1
+    ],
+    [
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      642,
+      0,
+      0,
+      0
+    ],
+    [
+      6,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      243,
+      0,
+      45
+    ],
+    [
+      2,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      6,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      85,
+      0,
+      36
+    ]
+  ],
+  "false_positive": 299,
+  "false_negative": 417,
+  "feature_importance": [
+    {
+      "feature": "Destination Port",
+      "importance": 0.06258102261856797
+    },
+    {
+      "feature": "Init_Win_bytes_backward",
+      "importance": 0.04655819870034164
+    },
+    {
+      "feature": "Fwd Packet Length Max",
+      "importance": 0.03506588598311998
+    },
+    {
+      "feature": "Bwd Packet Length Max",
+      "importance": 0.02726705463777031
+    },
+    {
+      "feature": "Bwd Packets/s",
+      "importance": 0.02656105276205503
+    },
+    {
+      "feature": "Flow Packets/s",
+      "importance": 0.02570346666419872
+    },
+    {
+      "feature": "Avg Bwd Segment Size",
+      "importance": 0.025667715763397225
+    },
+    {
+      "feature": "Flow Duration",
+      "importance": 0.024952484423990402
+    },
+    {
+      "feature": "Subflow Bwd Bytes",
+      "importance": 0.023797594192999583
+    },
+    {
+      "feature": "Flow IAT Max",
+      "importance": 0.023557390465909194
+    },
+    {
+      "feature": "min_seg_size_forward",
+      "importance": 0.023522673355115712
+    },
+    {
+      "feature": "Bwd Packet Length Mean",
+      "importance": 0.022635159611593077
+    },
+    {
+      "feature": "Packet Length Mean",
+      "importance": 0.021982071400572574
+    },
+    {
+      "feature": "Flow IAT Std",
+      "importance": 0.02093785039973458
+    },
+    {
+      "feature": "Init_Win_bytes_forward",
+      "importance": 0.02072363797171873
+    }
+  ]
+}
