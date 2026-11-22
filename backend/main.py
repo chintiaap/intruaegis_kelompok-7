@@ -18,7 +18,7 @@ MAX_BYTES = 100 * 1024 * 1024  # batas upload 100 MB
 app = FastAPI(title="IntruAegis API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],   # alamat Next.js
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],   # alamat Next.js lokal
     allow_methods=["*"],
     allow_headers=["*"],
 )
