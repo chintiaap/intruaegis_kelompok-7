@@ -1,44 +1,56 @@
 # IntruAegis - Backend (FastAPI)
 
-REST API untuk sistem deteksi intrusi jaringan IntruAegis. Backend menerima file CSV berisi aliran jaringan (flow), lalu model Random Forest memprediksi apakah tiap flow normal atau serangan.
+REST API untuk sistem deteksi intrusi jaringan IntruAegis. Backend menerima berkas CSV berisi aliran jaringan (*network flow*), lalu model Random Forest memprediksi kelas setiap baris: lalu lintas normal (`BENIGN`) atau salah satu dari 14 jenis serangan.
 
 ## Teknologi
+
 - Python 3.10 atau lebih baru
 - FastAPI dan Uvicorn
-- **scikit-learn 1.6.1** (wajib sama dengan versi saat training, supaya `model.joblib` terbaca)
-- pandas, joblib
+- **scikit-learn 1.6.1**: wajib sama dengan versi saat pelatihan, supaya `model.joblib` terbaca dengan benar
+- pandas, joblib, python-multipart
 
 ## Isi folder
-| File | Fungsi |
+
+| Berkas | Fungsi |
 |---|---|
 | `main.py` | Kode API |
 | `model.joblib` | Model Random Forest (69 fitur, 15 kelas), dilatih pada CIC-IDS2017 |
 | `classes.json` | Daftar 15 nama kelas |
-| `feature_names.json` | Daftar 69 fitur beserta urutannya saat training |
-| `metrics.json` | Hasil evaluasi model |
-| `sample_flows.csv` | Contoh data untuk pengujian |
-| `requirements.txt` | Daftar library |
+| `feature_names.json` | Daftar 69 fitur beserta urutannya saat pelatihan |
+| `metrics.json` | Hasil evaluasi model (untuk halaman Model Performance) |
+| `sample_flows.csv` | Contoh data 109 baris untuk pengujian |
+| `requirements.txt` | Daftar pustaka |
+| `test_api.py` | Pengujian otomatis (pytest), 10 skenario |
 
 ## Cara menjalankan
+
 ```bash
 python -m venv venv
-venv\Scripts\activate        # Mac/Linux: source venv/bin/activate
+venv\Scripts\activate            # Mac/Linux: source venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload
+uvicorn main:app --reload --port 8000
 ```
-Server berjalan di `http://localhost:8000`. Dokumentasi interaktif ada di `http://localhost:8000/docs`.
+
+Server siap jika muncul tulisan `Uvicorn running on http://127.0.0.1:8000`. Dokumentasi interaktif ada di http://localhost:8000/docs.
+
+Catatan Windows (PowerShell):
+- Pastikan di depan baris perintah muncul `(venv)`. Jika tidak, `venv` belum aktif dan perintah akan memakai Python lain yang belum memiliki FastAPI.
+- Jika muncul galat *running scripts is disabled*, jalankan `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`, lalu aktifkan `venv` lagi.
 
 ## Endpoint
-| Method | Path | Fungsi |
+
+| Metode | Path | Fungsi |
 |---|---|---|
-| GET | `/health` | Cek server hidup |
-| GET | `/metrics` | Hasil evaluasi model (akurasi, F1 per kelas, confusion matrix) |
-| POST | `/predict` | Upload CSV, hasilnya prediksi tiap baris |
+| GET | `/health` | Memeriksa server dan model |
+| GET | `/metrics` | Hasil evaluasi model (akurasi, macro F1, per kelas, confusion matrix, FP dan FN, fitur penting) |
+| POST | `/predict` | Menerima CSV, mengembalikan hasil prediksi |
 
 ### POST /predict
-Kirim file CSV dengan field `file` (multipart/form-data). CSV harus memuat 69 kolom fitur CIC-IDS2017 (lihat `feature_names.json`). Contoh file: `sample_flows.csv`.
 
-Contoh respons (dipersingkat):
+Kirim berkas CSV pada field `file` (multipart/form-data). CSV harus memuat **69 kolom fitur** CIC-IDS2017 sesuai `feature_names.json`. Kolom tambahan (misalnya `Label`) diabaikan, dan urutan kolom tidak berpengaruh karena backend mengurutkan ulang.
+
+Contoh respons untuk `sample_flows.csv` (dipersingkat):
+
 ```json
 {
   "total_rows": 109,
@@ -47,27 +59,59 @@ Contoh respons (dipersingkat):
   "normal": 14,
   "attacks": 95,
   "attack_ratio": 0.8716,
-  "distribution": {
-    "BENIGN": 14,
-    "DoS Hulk": 8,
-    "PortScan": 8
-  },
-  "detections": [
-    {"row": 0, "label": "BENIGN", "confidence": 1.0}
-  ]
+  "distribution": { "BENIGN": 14, "DoS Hulk": 8, "PortScan": 8 },
+  "detections": [ { "row": 0, "label": "BENIGN", "confidence": 1.0 } ]
 }
 ```
 
-Keterangan:
-- `rows_dropped`: jumlah baris yang dibuang karena berisi nilai kosong atau tak terhingga (sama seperti saat training)
-- `detections`: maksimal 200 baris pertama
-- `confidence`: peluang tertinggi dari model untuk label yang dipilih
+| Field | Keterangan |
+|---|---|
+| `total_rows` | Jumlah baris pada berkas yang diunggah |
+| `rows_dropped` | Baris yang dibuang karena berisi nilai kosong atau tak terhingga (sama seperti saat pelatihan) |
+| `total`, `normal`, `attacks` | Jumlah baris yang diprediksi, serta jumlah normal dan serangan |
+| `attack_ratio` | Proporsi serangan |
+| `distribution` | Jumlah baris untuk setiap kelas hasil prediksi |
+| `detections` | Maksimal 200 baris pertama beserta label dan `confidence` (peluang tertinggi dari model) |
 
-Error yang mungkin muncul:
-- `400`: file bukan CSV valid, kolom kurang, atau tidak ada baris valid
-- `413`: ukuran file lebih dari 100 MB
+Kode galat:
+
+| Kode | Penyebab |
+|---|---|
+| `400` | Bukan CSV valid, kolom fitur kurang (pesan menyebut kolom yang hilang), atau tidak ada baris valid |
+| `413` | Ukuran berkas lebih dari 100 MB |
+| `422` | Permintaan tanpa berkas |
+
+## Pengujian
+
+```bash
+pip install pytest httpx
+pytest -v
+```
+
+Hasil yang diharapkan: **10 passed**. Pengujian berjalan dari folder `backend` dan tidak memerlukan server yang sedang menyala. Skenario yang diuji:
+
+- `/health` dan `/metrics` memberi respons yang benar
+- Berkas valid (`sample_flows.csv`) diproses seluruhnya
+- Baris berisi nilai tak terhingga atau kosong dibuang
+- Kolom kurang, berkas bukan CSV, seluruh baris rusak, berkas lebih dari 100 MB, dan permintaan tanpa berkas ditolak dengan kode yang sesuai
+- Urutan kolom yang diacak dan spasi pada nama kolom tidak mengubah hasil
+
+Seluruh pengujian memerlukan sekitar 20 detik karena skenario berkas 100 MB membuat data besar di memori.
 
 ## Catatan
-- CORS saat ini hanya mengizinkan `http://localhost:3000` (alamat Next.js). Ubah di `main.py` jika frontend memakai alamat lain.
-- Sistem menganalisis file CSV yang di-upload, bukan memantau jaringan secara langsung.
-- Jika model dilatih ulang, ganti `model.joblib`, `classes.json`, `feature_names.json`, dan `metrics.json` di folder ini dengan versi terbaru dari folder `ml/`.
+
+- CORS hanya mengizinkan `http://localhost:3000` dan `http://127.0.0.1:3000` (alamat Next.js). Ubah `allow_origins` di `main.py` jika antarmuka memakai alamat lain.
+- Sistem menganalisis berkas CSV yang diunggah, bukan memantau jaringan secara langsung.
+- Belum ada autentikasi, sehingga belum layak dipakai di luar lingkungan lokal tanpa pengamanan tambahan.
+- Berkas `model.joblib` hanya boleh berasal dari sumber tepercaya, karena format joblib (pickle) dapat menjalankan kode saat dimuat. Backend tidak menerima model dari pengguna.
+- Jika model dilatih ulang, ganti `model.joblib`, `classes.json`, `feature_names.json`, dan `metrics.json` di folder ini dengan versi terbaru dari folder `ml/artifacts/`. Jika tidak, API tetap memakai model lama.
+
+## Pemecahan masalah
+
+| Masalah | Solusi |
+|---|---|
+| `ModuleNotFoundError: No module named 'fastapi'` | `venv` belum aktif. Jalankan `venv\Scripts\activate`, lalu `pip install -r requirements.txt` |
+| Galat atau peringatan versi saat memuat model | Versi scikit-learn bukan 1.6.1. Pasang ulang dari `requirements.txt` di dalam `venv` |
+| Respons 400 "Kolom hilang" | CSV tidak memuat 69 fitur. Gunakan `sample_flows.csv` sebagai acuan format |
+| Galat CORS di konsol browser | Antarmuka berjalan di alamat selain port 3000. Tambahkan alamatnya di `allow_origins` |
+| Port 8000 sudah dipakai | Tutup aplikasi lain yang memakainya, atau ganti `--port` dan sesuaikan `NEXT_PUBLIC_API_URL` di frontend |
